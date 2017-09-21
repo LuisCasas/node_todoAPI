@@ -24,4 +24,6 @@ app.post('/todos', (req, res) => {
 
 app.listen(3000, () => {
     console.log('Express up and running');
-})
+});
+
+module.exports = {app};
