@@ -7,6 +7,7 @@ var {User} = require('./models/user');
 var {ObjectID} = require('mongodb');
 
 var app = express();
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
@@ -32,7 +33,6 @@ app.get('/todos', (req, res) => {
 });
 
 
-
 app.get('/todos/:id', (req, res) => {
     // res.send(req.params);
     // test id: ObjectId("59cd69ef386c8b122415c637")
@@ -55,8 +55,8 @@ app.get('/todos/:id', (req, res) => {
     });
 });
 
-app.listen(3000, () => {
-    console.log('Express up and running');
+app.listen(port, () => {
+    console.log('Express up and running at port', port);
 });
 
 module.exports = {app};
