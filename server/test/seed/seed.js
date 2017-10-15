@@ -9,19 +9,19 @@ const userID2 = new ObjectID;
 
 const users = [{
     _id: userID1,
-    email: 'ramon@g.com',
+    email: 'example@gmail.com',
     password: 'pass123',
     tokens: [{
         access: 'auth',
-        token: jwt.sign({_id: userID1, access: 'auth'}, 'secretCode').toString()
+        token: jwt.sign({_id: userID1, access: 'auth'}, 'toBeChanged123').toString()
     }] 
 }, {
-    _id: new ObjectID,
+    _id: userID2,
     email: 'ramon2@g.com',
     password: 'pass123',
     tokens: [{
         access: 'auth',
-        token: jwt.sign({_id: userID2, access: 'auth'}, 'secretCode').toString()
+        token: jwt.sign({_id: userID2, access: 'auth'}, 'toBeChanged123').toString()
     }]  
 }];
 
