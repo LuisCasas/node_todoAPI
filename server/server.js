@@ -3,14 +3,15 @@ require('./config/config.js')
 const _ = require('lodash'); 
 const express = require('express');
 const bodyParser = require('body-parser');
-var {ObjectID} = require('mongodb');
+const {ObjectID} = require('mongodb');
+const bcrypt = require('bcryptjs');
 
-var {mongoose} = require('./db/mongoose');
-var {Todo} = require('./models/todo');
-var {User} = require('./models/user');
-var {authenticate} = require('./middleware/authenticate');
+const {mongoose} = require('./db/mongoose');
+const {Todo} = require('./models/todo');
+const {User} = require('./models/user');
+const {authenticate} = require('./middleware/authenticate');
 
-var app = express();
+const app = express();
 const port = process.env.PORT;
 
 app.use(bodyParser.json());
@@ -95,7 +96,7 @@ app.patch('/todos/:id', (req, res) => {
 
     Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
         if(!todo){
-            res.status(404).send();
+            return res.status(404).send();
         }
 
         res.send({todo});
@@ -123,6 +124,53 @@ app.post('/users', (req, res) => {
 
 app.get('/users/me', authenticate, (req, res) => {
     res.send(req.user);
+})
+
+app.post('/users/login', (req, res) => {
+
+    var body = _.pick(req.body, ['email', 'password']);
+
+    User.findByCredentials(body.email, body.password).then((user) => {
+     //   console.log(user);
+        // res.send(user);
+        return user.generateAuthToken().then((token) => {
+            res.header('x-auth', token).send(user);
+        });
+    }).catch((err) => {
+        res.status(400).send();
+    });
+
+    // var email = body.email; 
+
+ //   res.send(body);
+
+ /*   
+    var password = bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(body.password, salt, (err, hash) => {
+            // console.log(hash);
+            return hash;
+        });
+    });           
+*/
+/*
+    User.findOne({email}).then((user) => {
+        if(!user){
+            // console.log('bad request');
+            return res.status(400).send();
+        }
+
+        // console.log(user.password, body.password);
+        
+        // return res.send();
+        if(bcrypt.compare(res.password, body.password)){
+            return res.send(user);
+            // console.log('Logged in');
+        } else {
+            return res.status(401).send();
+//            console.log('fail to login');
+        }
+    });
+*/
 })
 
 app.listen(port, () => {

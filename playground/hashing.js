@@ -14,7 +14,7 @@ var hashPass = '$2a$10$bgDMHC77/f5ANqSivRWAruCcloNxPgkzqwUbFXQm7120IvTrUxp.q';
 
 bcrypt.compare(password, hashPass, (err, res) => {
     console.log(res);
-})
+});
 
 // var data = {
 //     id: 6

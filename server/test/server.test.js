@@ -231,13 +231,14 @@ describe('POST /users', () => {
             });
     });
 
-    it('should validation error if request invalid', (done) => {
-        var email = 'email.com';
-        var password = '3nc';       
+    it('should validation error if request invalid', (done) => {      
         
         request(app)
             .post('/users')
-            .send({email, password})
+            .send({
+                email: 'email.com', 
+                password: 'wde'
+            })
             .expect(400)
             .end(done);
     });
