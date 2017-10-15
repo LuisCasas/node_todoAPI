@@ -227,7 +227,7 @@ describe('POST /users', () => {
                     expect(user).toBeTruthy();
                     expect(user.password).not.toBe(email);
                     done();
-                });
+                }).catch((e) => done(e));
             });
     });
 
@@ -252,5 +252,58 @@ describe('POST /users', () => {
             .send({email})
             .expect(400)
             .end(done);
+    });
+});
+
+describe('POST /users/login', () => {
+    it('should validate user and return auth token', (done) => {
+        request(app)
+            .post('/users/login')
+            .send({
+                email: users[1].email,
+                password: users[1].password
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.headers['x-auth']).toBeTruthy();
+            })
+            .end((err, res) => {
+                if(err){
+                    return done(err);
+                }
+
+                User.findById(users[1]._id).then((user) => {
+                    // expect(user.token[1]).toInclude({
+                    expect(user.toObject().tokens[1]).toMatchObject({
+                        access: 'auth',
+                        token: res.header['x-auth']
+                    });
+                    done();
+                }).catch((e) => done(e));
+            });
+    });
+
+    it('shoudl return 400 and fail authentication', (done) => {
+        request(app)
+        .post('/users/login')
+        .send({
+            email: 'some@email.com',
+            password: 'password'
+        })
+        .expect(400)
+        .expect((res) => {
+            expect(res.headers['x-auth']).toBeFalsy();
+        })
+        .end((err, res) => {
+            if(err){
+                return done(err);
+            }
+
+            User.findById(users[1]._id).then((user) => {
+                // expect(user.token[1]).toInclude({
+                expect(user.tokens.length).toBe(1);
+                done();
+            }).catch((e) => done(e));
+        });
     });
 })
