@@ -139,39 +139,15 @@ app.post('/users/login', (req, res) => {
     }).catch((err) => {
         res.status(400).send();
     });
+});
 
-    // var email = body.email; 
-
- //   res.send(body);
-
- /*   
-    var password = bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(body.password, salt, (err, hash) => {
-            // console.log(hash);
-            return hash;
-        });
-    });           
-*/
-/*
-    User.findOne({email}).then((user) => {
-        if(!user){
-            // console.log('bad request');
-            return res.status(400).send();
-        }
-
-        // console.log(user.password, body.password);
-        
-        // return res.send();
-        if(bcrypt.compare(res.password, body.password)){
-            return res.send(user);
-            // console.log('Logged in');
-        } else {
-            return res.status(401).send();
-//            console.log('fail to login');
-        }
+app.delete('/users/me/token', authenticate, (req, res) => {
+    req.user.removeToken(req.token).then(() => {
+        res.status(200).send();
+    }, () => {
+        res.status(400).send();
     });
-*/
-})
+});
 
 app.listen(port, () => {
     console.log('Express up and running at port', port);
